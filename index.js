@@ -12,12 +12,12 @@ app.use(cors());
 app.use(express.json());
 
 
-const PORT = 3000 || process.env.PORT;
+const PORT = 3008 || process.env.PORT;
 
 
 // MongoDB Database Connection
 
-const uri = "mongodb+srv://tenet025:UqPicmzp4D60s6k6@cluster0.cfoby.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const uri = process.env.MONGODB_URI;
 
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -34,6 +34,23 @@ async function run() {
         console.log("Connected to the server");
         const database = client.db("crowdHex");
         const campaignsCollection = database.collection("campaigns");
+
+        app.get('/campaigns', async (req, res) => {
+            const campaigns = await campaignsCollection.find().toArray();
+            res.send(campaigns);
+        });
+
+
+        app.post('/campaigns', async (req, res) => {
+            const newCampaign = req.body;
+            console.log(newCampaign);
+            const result = await campaignsCollection.insertOne(newCampaign);
+            res.send(result);
+        });
+
+        app.get('/', (req, res) => {
+            res.send('Hello World');
+        });
 
         // app.get('/users', async (req, res) => {
         //     const users = await usersCollection.find().toArray();
