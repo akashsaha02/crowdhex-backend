@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 dotenv.config();
 
@@ -12,7 +12,7 @@ app.use(cors());
 app.use(express.json());
 
 
-const PORT = 3008 || process.env.PORT;
+const PORT = 3000 || process.env.PORT;
 
 
 // MongoDB Database Connection
@@ -34,10 +34,20 @@ async function run() {
         console.log("Connected to the server");
         const database = client.db("crowdHex");
         const campaignsCollection = database.collection("campaigns");
+        const donatationCollection = database.collection("donations");
+
+
+        // campaigns operation
 
         app.get('/campaigns', async (req, res) => {
             const campaigns = await campaignsCollection.find().toArray();
             res.send(campaigns);
+        });
+
+        app.get('/campaigns/:id', async (req, res) => {
+            const id = req.params.id;
+            const campaign = await campaignsCollection.findOne({ _id: new ObjectId(id) });
+            res.send(campaign);
         });
 
 
@@ -45,6 +55,15 @@ async function run() {
             const newCampaign = req.body;
             console.log(newCampaign);
             const result = await campaignsCollection.insertOne(newCampaign);
+            res.send(result);
+        });
+
+        // donation operation
+        
+        app.post('/donations', async (req, res) => {
+            const newDonation = req.body;
+            console.log(newDonation);
+            const result = await donatationCollection.insertOne(newDonation);
             res.send(result);
         });
 
