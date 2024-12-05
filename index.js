@@ -58,8 +58,16 @@ async function run() {
             res.send(result);
         });
 
+        app.get('/campaigns/:id/donations', async (req, res) => {
+            const id = req.params.id;
+            const donations = await donatationCollection.find({ campaignId: id }).toArray();
+            res.send(donations);
+        });
+
+
+
         // donation operation
-        
+
         app.post('/donations', async (req, res) => {
             const newDonation = req.body;
             console.log(newDonation);
