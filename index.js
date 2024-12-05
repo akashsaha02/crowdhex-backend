@@ -50,6 +50,11 @@ async function run() {
             res.send(campaign);
         });
 
+        app.get('/campaigns/:id/donations', async (req, res) => {
+            const id = req.params.id;
+            const donations = await donatationCollection.find({ campaignId: id }).toArray();
+            res.send(donations);
+        });
 
         app.post('/campaigns', async (req, res) => {
             const newCampaign = req.body;
@@ -58,15 +63,35 @@ async function run() {
             res.send(result);
         });
 
-        app.get('/campaigns/:id/donations', async (req, res) => {
+        app.put('/campaigns/:id', async (req, res) => {
             const id = req.params.id;
-            const donations = await donatationCollection.find({ campaignId: id }).toArray();
-            res.send(donations);
+            const updatedCampaign = req.body;
+            const result = await campaignsCollection.updateOne({ _id: new ObjectId(id) }, { $set: updatedCampaign });
+            res.send(result);
+        });
+
+        app.put('/campaigns/:id', async (req, res) => {
+            const id = req.params.id;
+            const updatedCampaign = req.body;
+            const result = await campaignsCollection.updateOne({ _id: new ObjectId(id) }, { $set: updatedCampaign });
+            res.send(result);
+        });
+
+        app.delete('/campaigns/:id', async (req, res) => {
+            const id = req.params.id;
+            const result = await campaignsCollection.deleteOne({ _id: new ObjectId(id) });
+            res.send(result);
         });
 
 
 
+
         // donation operation
+
+        app.get('/donations', async (req, res) => {
+            const donations = await donatationCollection.find().toArray();
+            res.send(donations);
+        });
 
         app.post('/donations', async (req, res) => {
             const newDonation = req.body;
