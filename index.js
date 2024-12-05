@@ -46,102 +46,83 @@ async function run() {
 
         app.get('/campaigns/:id', async (req, res) => {
             const id = req.params.id;
+            if (!ObjectId.isValid(id)) {
+                return res.status(400).send('Invalid campaign ID');
+            }
             const campaign = await campaignsCollection.findOne({ _id: new ObjectId(id) });
             res.send(campaign);
         });
 
-        app.get('/campaigns/:id/donations', async (req, res) => {
-            const id = req.params.id;
-            const donations = await donatationCollection.find({ campaignId: id }).toArray();
-            res.send(donations);
-        });
+        app.get('/running', async (req, res) => {
+            const currentDate = new Date().toISOString().split("T")[0];
+            const campaignst = await campaignsCollection.find({ deadline: { $gt: currentDate } }).limit(3).toArray();
+        res.send(campaignst);
+    });
 
-        app.post('/campaigns', async (req, res) => {
-            const newCampaign = req.body;
-            console.log(newCampaign);
-            const result = await campaignsCollection.insertOne(newCampaign);
-            res.send(result);
-        });
-
-        app.put('/campaigns/:id', async (req, res) => {
-            const id = req.params.id;
-            const updatedCampaign = req.body;
-            const result = await campaignsCollection.updateOne({ _id: new ObjectId(id) }, { $set: updatedCampaign });
-            res.send(result);
-        });
-
-        app.put('/campaigns/:id', async (req, res) => {
-            const id = req.params.id;
-            const updatedCampaign = req.body;
-            const result = await campaignsCollection.updateOne({ _id: new ObjectId(id) }, { $set: updatedCampaign });
-            res.send(result);
-        });
-
-        app.delete('/campaigns/:id', async (req, res) => {
-            const id = req.params.id;
-            const result = await campaignsCollection.deleteOne({ _id: new ObjectId(id) });
-            res.send(result);
-        });
+    app.get('/campaigns/:id/donations', async (req, res) => {
+        const id = req.params.id;
+        if (!ObjectId.isValid(id)) {
+            return res.status(400).send('Invalid campaign ID');
+        }
+        const donations = await donatationCollection.find({ campaignId: id }).toArray();
+        res.send(donations);
+    });
 
 
 
+    app.post('/campaigns', async (req, res) => {
+        const newCampaign = req.body;
+        console.log(newCampaign);
+        const result = await campaignsCollection.insertOne(newCampaign);
+        res.send(result);
+    });
 
-        // donation operation
+    app.put('/campaigns/:id', async (req, res) => {
+        const id = req.params.id;
+        const updatedCampaign = req.body;
+        const result = await campaignsCollection.updateOne({ _id: new ObjectId(id) }, { $set: updatedCampaign });
+        res.send(result);
+    });
 
-        app.get('/donations', async (req, res) => {
-            const donations = await donatationCollection.find().toArray();
-            res.send(donations);
-        });
+    app.put('/campaigns/:id', async (req, res) => {
+        const id = req.params.id;
+        const updatedCampaign = req.body;
+        const result = await campaignsCollection.updateOne({ _id: new ObjectId(id) }, { $set: updatedCampaign });
+        res.send(result);
+    });
 
-        app.post('/donations', async (req, res) => {
-            const newDonation = req.body;
-            console.log(newDonation);
-            const result = await donatationCollection.insertOne(newDonation);
-            res.send(result);
-        });
+    app.delete('/campaigns/:id', async (req, res) => {
+        const id = req.params.id;
+        const result = await campaignsCollection.deleteOne({ _id: new ObjectId(id) });
+        res.send(result);
+    });
 
-        app.get('/', (req, res) => {
-            res.send('Hello World');
-        });
 
-        // app.get('/users', async (req, res) => {
-        //     const users = await usersCollection.find().toArray();
-        //     res.send(users);
-        // });
+    // donation operation
 
-        // app.get('/users/:id', async (req, res) => {
-        //     const id = req.params.id;
-        //     const user = await usersCollection.findOne({ _id: new ObjectId(id) });
-        //     res.send(user);
-        // });
+    app.get('/donations', async (req, res) => {
+        const donations = await donatationCollection.find().toArray();
+        res.send(donations);
+    });
 
-        // app.post('/users', async (req, res) => {
-        //     const newUser = req.body;
-        //     console.log(newUser);
-        //     const result = await usersCollection.insertOne(newUser);
-        //     res.send(result);
-        // });
+    app.post('/donations', async (req, res) => {
+        const newDonation = req.body;
+        console.log(newDonation);
+        const result = await donatationCollection.insertOne(newDonation);
+        res.send(result);
+    });
 
-        // app.put('/users/:id', async (req, res) => {
-        //     const id = req.params.id;
-        //     const updatedUser = req.body;
-        //     const result = await usersCollection.updateOne({ _id: new ObjectId(id) }, { $set: updatedUser });
-        //     res.send(result);
-        // });
+    app.get('/', (req, res) => {
+        res.send('Hello World');
+    });
 
-        // app.delete('/users/:id', async (req, res) => {
-        //     const id = req.params.id;
-        //     const result = await usersCollection.deleteOne({ _id: new ObjectId(id) });
-        //     res.send(result);
-        // });
+    app.listen(PORT, () => {
+        console.log(`Server is running on port ${PORT}`);
+    });
 
-        app.listen(PORT, () => {
-            console.log(`Server is running on port ${PORT}`);
-        });
-
-    } catch (error) {
-        console.error(error);
-    }
+} catch (error) {
+    console.error(error);
+}
 }
 
 run().catch(console.dir);
