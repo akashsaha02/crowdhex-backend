@@ -30,7 +30,7 @@ const client = new MongoClient(uri, {
 });
 async function run() {
     try {
-        await client.connect();
+        // await client.connect();
         console.log("Connected to the server");
         const database = client.db("crowdHex");
         const campaignsCollection = database.collection("campaigns");
@@ -72,7 +72,7 @@ async function run() {
 
     app.post('/campaigns', async (req, res) => {
         const newCampaign = req.body;
-        console.log(newCampaign);
+        // console.log(newCampaign);
         const result = await campaignsCollection.insertOne(newCampaign);
         res.send(result);
     });
@@ -107,7 +107,7 @@ async function run() {
 
     app.post('/donations', async (req, res) => {
         const newDonation = req.body;
-        console.log(newDonation);
+        // console.log(newDonation);
         const result = await donatationCollection.insertOne(newDonation);
         res.send(result);
     });
