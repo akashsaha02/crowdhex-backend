@@ -55,7 +55,7 @@ async function run() {
 
         app.get('/running', async (req, res) => {
             const currentDate = new Date().toISOString().split("T")[0];
-            const campaignst = await campaignsCollection.find({ deadline: { $gt: currentDate } }).limit(3).toArray();
+            const campaignst = await campaignsCollection.find({ deadline: { $gt: currentDate } }).limit(6).toArray();
         res.send(campaignst);
     });
 
