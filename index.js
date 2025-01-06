@@ -60,7 +60,8 @@ async function run() {
 
         app.get('/running', async (req, res) => {
             const currentDate = new Date().toISOString().split("T")[0];
-            const campaignst = await campaignsCollection.find({ deadline: { $gt: currentDate } }).limit(6).toArray();
+            const limit = parseInt(req.query.limit) || 1;
+            const campaignst = await campaignsCollection.find({ deadline: { $gt: currentDate } }).limit(limit).toArray();
         res.send(campaignst);
     });
 
