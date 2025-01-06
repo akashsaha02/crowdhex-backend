@@ -8,7 +8,12 @@ dotenv.config();
 const app = express();
 
 // middlewares
-app.use(cors());
+app.use(cors(
+    {
+        origin: ['http://localhost:5173','https://crowdhex.web.app','https://crowdhex.firebaseapp.com'],
+        credentials: true,
+    }
+));
 app.use(express.json());
 
 
